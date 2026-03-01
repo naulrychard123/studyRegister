@@ -1,8 +1,8 @@
 const connection = require('./db')
 
-async function save(conteudo, data, time, desc){
-    const sql = `INSERT INTO studyRegisters (conteudo, data, time, desc) VALUES (?,?,?,?);`
-    const [results] =  await connection.query(sql, [conteudo, data, time, desc])
+async function save(conteudo, dia, tempo, descricao){
+    const sql = `INSERT INTO contentRegisters (conteudo, dia, tempo, descricao) VALUES (?,?,?,?);`
+    const [results] =  await connection.query(sql, [conteudo, dia, tempo, descricao])
     return results
 }
 
@@ -16,17 +16,17 @@ Exemplo:
 
 async function readRegisters(param){
     if(param.req == 'conteudo'){
-        const sql = `SELECT * FROM studyRegisters WHERE conteudo = ?;`
+        const sql = `SELECT * FROM contentRegisters WHERE conteudo = ?;`
         const [results] = await connection.query(sql, param.req)
         return results
 
     } else if (param.req == 'data'){
-        const sql = `SELECT * FROM studyRegisters WHERE data = ?;`
+        const sql = `SELECT * FROM contentRegisters WHERE dia = ?;`
         const [results] = await connection.query(sql, param.content)
         return results
 
     } else if (param.req == 'description'){
-        const sql = `SELECT * FROM studyRegisters WHERE desc = ?;`
+        const sql = `SELECT * FROM contentRegisters WHERE descricao = ?;`
         const [results] = await connection.query(sql, param.content)
         return results
 
