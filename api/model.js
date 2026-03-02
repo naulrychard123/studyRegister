@@ -1,33 +1,32 @@
-const connection = require('./db')
+const { pool } = require('./db')
 
 async function save(conteudo, dia, tempo, descricao){
     const sql = `INSERT INTO contentRegisters (conteudo, dia, tempo, descricao) VALUES (?,?,?,?);`
-    const [results] =  await connection.query(sql, [conteudo, dia, tempo, descricao])
+    const [results] = await pool.query(sql, [conteudo, dia, tempo, descricao])
     return results
 }
 
 /*  Como parametro dessa function, ela recebe um json com as especificações da consulta
 Exemplo:
 {
-    req: 'conteudo or data or desc'
-    content: data específicada or descrição
-
+    req: 'conteudo or dia or descricao'
+    content: valor para filtrar
 } */
 
 async function readRegisters(param){
-    if(param.req == 'conteudo'){
+    if(param.req === 'conteudo'){
         const sql = `SELECT * FROM contentRegisters WHERE conteudo = ?;`
-        const [results] = await connection.query(sql, param.req)
+        const [results] = await pool.query(sql, [param.content])
         return results
 
-    } else if (param.req == 'data'){
+    } else if (param.req === 'dia'){
         const sql = `SELECT * FROM contentRegisters WHERE dia = ?;`
-        const [results] = await connection.query(sql, param.content)
+        const [results] = await pool.query(sql, [param.content])
         return results
 
-    } else if (param.req == 'description'){
+    } else if (param.req === 'descricao'){
         const sql = `SELECT * FROM contentRegisters WHERE descricao = ?;`
-        const [results] = await connection.query(sql, param.content)
+        const [results] = await pool.query(sql, [param.content])
         return results
 
     } else {
@@ -35,19 +34,19 @@ async function readRegisters(param){
     }
 }
 
-/* Aqui o parametro json devem ser duas data distintintas para realizar uma consulta between
-Essas datas precisam ser previamente determinadas no controller para não gerar uma consulta redundante.
-Como por exemplo: as mesmas datas serem colocadas 2 vezes, ou uma data inesistente no banco
+/* Aqui o parametro json devem ser dois dias distintos para realizar uma consulta between
+Esses dias precisam ser previamente determinados no controller para não gerar uma consulta redundante.
+Como por exemplo: os mesmos dias serem colocados 2 vezes, ou um dia inexistente no banco
 
 Esse modelo pode ser montado no controller
 json: {
-data1: '00-00-0000',
-data2: '00-00-0000'
+dia1: '00-00-0000',
+dia2: '00-00-0000'
 } */
 
-async function returnToStudyTime(betweenData){
-    const sql = `SELECT * FROM studyRegisters WHERE data BETWEEN ? AND ?;`
-    const results = await connection.query(sql, [betweenData.data1, betweenData.data2])
+async function returnToStudyTime(betweenDia){
+    const sql = `SELECT * FROM studyRegisters WHERE dia BETWEEN ? AND ?;`
+    const [results] = await pool.query(sql, [betweenDia.dia1, betweenDia.dia2])
     return results
 }
 
